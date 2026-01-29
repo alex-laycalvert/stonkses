@@ -1,0 +1,25 @@
+{
+    "name": "@repo/robinhood",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "license": "MIT",
+    "exports": {
+        ".": {
+            "types": "./index.ts",
+            "default": "./index.ts"
+        }
+    },
+    "scripts": {
+        "lint": "biome check --write",
+        "check-types": "tsc --noEmit"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@repo/biome-config": "*",
+        "@repo/typescript-config": "*",
+        "typescript": "^5.9.2"
+    }
+}
