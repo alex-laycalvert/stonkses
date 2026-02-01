@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession } from "better-auth/plugins";
 import { db } from "./db";
-import * as schema from "./db/schema";
 
 // Get frontend URL for trusted origins
 // Falls back to localhost for development
