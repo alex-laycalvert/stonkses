@@ -231,18 +231,9 @@ fastify.get(
     },
 );
 
-fastify.listen({ port: 3000 }, (err, address) => {
-    if (err) {
-        fastify.log.error(err);
-        process.exit(1);
-    }
-
-    fastify.log.info(`Server listening at ${address}`);
-});
-
 // Only listen when running locally (not on Vercel)
 if (!process.env.VERCEL) {
-    fastify.listen({ port: 3000 }, (err, address) => {
+    fastify.listen({ port: 3000, host: "0.0.0.0" }, (err, address) => {
         if (err) {
             fastify.log.error(err);
             process.exit(1);
@@ -251,3 +242,6 @@ if (!process.env.VERCEL) {
         fastify.log.info(`Server listening at ${address}`);
     });
 }
+
+// Export the Fastify instance for Vercel serverless
+export default fastify;
