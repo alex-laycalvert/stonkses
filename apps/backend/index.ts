@@ -29,12 +29,21 @@ const fastify = Fastify({
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
 
+// Log environment variables in production for debugging
+if (process.env.NODE_ENV === "production") {
+    console.log("CORS Configuration:");
+    console.log("FRONTEND_URL:", frontendUrl);
+    console.log("BACKEND_URL:", backendUrl);
+}
+
 // Support both single frontend URL and additional origins
 const allowedOrigins = [frontendUrl];
 // Allow backend URL for auth callbacks
 if (backendUrl !== frontendUrl) {
     allowedOrigins.push(backendUrl);
 }
+
+console.log("Allowed CORS origins:", allowedOrigins);
 
 fastify.register(cors, {
     origin: allowedOrigins,
