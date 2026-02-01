@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { auth } from "../src/auth.ts";
+import { auth } from "../src/auth.js";
 
 // Parse allowed origins from environment variable
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";

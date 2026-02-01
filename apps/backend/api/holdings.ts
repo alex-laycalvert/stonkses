@@ -1,9 +1,9 @@
 import type { Holding } from "@repo/robinhood";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { eq } from "drizzle-orm";
-import { db } from "../src/db/index.ts";
-import { user as userTable } from "../src/db/schema.ts";
-import { RobinhoodClient } from "../src/robinhood.ts";
+import { db } from "../src/db/index.js";
+import { user as userTable } from "../src/db/schema.js";
+import { RobinhoodClient } from "../src/robinhood.js";
 import { requireAuth, setCorsHeaders } from "./_utils";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

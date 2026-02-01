@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { setCorsHeaders } from "../_utils.ts";
+import { setCorsHeaders } from "../_utils.js";
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
