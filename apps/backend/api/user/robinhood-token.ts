@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { eq } from "drizzle-orm";
-import { db } from "../../src/db";
-import { user as userTable } from "../../src/db/schema";
-import { requireAuth, setCorsHeaders } from "../_utils";
+import { db } from "../../src/db/index.ts";
+import { user as userTable } from "../../src/db/schema.ts";
+import { requireAuth, setCorsHeaders } from "../_utils.ts";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     setCorsHeaders(req, res);
