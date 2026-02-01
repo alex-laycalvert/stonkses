@@ -4,14 +4,26 @@ import { customSession } from "better-auth/plugins";
 import { db } from "./db";
 import * as schema from "./db/schema";
 
+// Get frontend URL for trusted origins
+// Falls back to localhost for development
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
+
+// Trusted origins should include the frontend URL
+const trustedOrigins = [frontendUrl];
+// Also trust backend URL if different (for same-domain deployments)
+if (backendUrl !== frontendUrl) {
+    trustedOrigins.push(backendUrl);
+}
+
 export const auth = betterAuth({
-    trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
+    trustedOrigins,
     database: drizzleAdapter(db, { provider: "sqlite" }),
     emailAndPassword: {
         enabled: true,
     },
     secret: process.env.BETTER_AUTH_SECRET,
-    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    baseURL: backendUrl,
     user: {
         additionalFields: {
             robinhoodToken: {

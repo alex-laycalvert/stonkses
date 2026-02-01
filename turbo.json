@@ -1,11 +1,13 @@
 {
     "$schema": "https://turborepo.dev/schema.json",
     "ui": "tui",
+    "globalEnv": ["FRONTEND_URL", "BACKEND_URL"],
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
-            "outputs": ["dist/**", "build/**", ".react-router/**"]
+            "outputs": ["dist/**", "build/**", ".react-router/**"],
+            "env": ["BETTER_AUTH_SECRET"]
         },
         "lint": {
             "dependsOn": ["^lint"]

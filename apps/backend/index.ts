@@ -23,8 +23,21 @@ const fastify = Fastify({
               },
 });
 
+// Parse allowed origins from environment variable
+// Uses FRONTEND_URL as the primary allowed origin
+// Falls back to localhost origins for development
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
+
+// Support both single frontend URL and additional origins
+const allowedOrigins = [frontendUrl];
+// Allow backend URL for auth callbacks
+if (backendUrl !== frontendUrl) {
+    allowedOrigins.push(backendUrl);
+}
+
 fastify.register(cors, {
-    origin: ["http://localhost:5173", "http://localhost:3000"],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,

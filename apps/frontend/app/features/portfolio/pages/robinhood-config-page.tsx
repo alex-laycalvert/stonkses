@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "~/features/auth/public";
+import { API_BASE_URL } from "~/global/constants/base-url";
 import { ROUTES } from "~/global/constants/routes";
 
 export default function RobinhoodConfigPage() {
@@ -20,7 +21,7 @@ export default function RobinhoodConfigPage() {
 
         try {
             const response = await fetch(
-                "http://localhost:3000/api/user/robinhood-token",
+                `${API_BASE_URL}/user/robinhood-token`,
                 {
                     method: "PUT",
                     headers: {
