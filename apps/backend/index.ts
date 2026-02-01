@@ -23,6 +23,9 @@ const fastify = Fastify({
               },
 });
 
+// Export immediately for Vercel
+export default fastify;
+
 // Parse allowed origins from environment variable
 // Uses FRONTEND_URL as the primary allowed origin
 // Falls back to localhost origins for development
@@ -242,6 +245,3 @@ if (!process.env.VERCEL) {
         fastify.log.info(`Server listening at ${address}`);
     });
 }
-
-// Export the Fastify instance for Vercel serverless
-export default fastify;
