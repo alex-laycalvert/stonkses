@@ -183,7 +183,7 @@ fastify.get(
         try {
             // Get user's robinhood token
             const [userData] = await db
-                .select({ robinhoodToken: userTable.robinhoodToken })
+                .select()
                 .from(userTable)
                 .where(eq(userTable.id, session.user.id));
 
