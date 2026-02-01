@@ -24,6 +24,21 @@
         },
         "test": {
             "cache": false
+        },
+        "deploy": {
+            "dependsOn": ["build", "lint", "check-types"],
+            "cache": false,
+            "outputs": [".vercel/**", "!.vercel/cache/**"]
+        },
+        "deploy:preview": {
+            "dependsOn": ["build", "lint", "check-types"],
+            "cache": false,
+            "outputs": [".vercel/**", "!.vercel/cache/**"]
+        },
+        "deploy:production": {
+            "dependsOn": ["build", "lint", "check-types"],
+            "cache": false,
+            "outputs": [".vercel/**", "!.vercel/cache/**"]
         }
     }
 }

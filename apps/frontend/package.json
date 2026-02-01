@@ -9,7 +9,10 @@
         "typecheck": "react-router typegen && tsc",
         "check-types": "react-router typegen && tsc",
         "lint": "biome check --write",
-        "test": "vitest"
+        "test": "vitest",
+        "deploy": "../../scripts/deploy-frontend.sh",
+        "deploy:preview": "../../scripts/deploy-frontend.sh",
+        "deploy:production": "../../scripts/deploy-frontend.sh --prod"
     },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",

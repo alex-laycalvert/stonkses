@@ -6,7 +6,14 @@
         "dev": "turbo run dev",
         "lint": "turbo run lint",
         "format": "biome format --write .",
-        "check-types": "turbo run check-types"
+        "check-types": "turbo run check-types",
+        "deploy": "turbo run deploy",
+        "deploy:preview": "turbo run deploy:preview",
+        "deploy:production": "turbo run deploy:production",
+        "deploy:backend": "turbo run deploy --filter=stonkses-backend",
+        "deploy:backend:prod": "turbo run deploy:production --filter=stonkses-backend",
+        "deploy:frontend": "turbo run deploy --filter=stonkses-frontend",
+        "deploy:frontend:prod": "turbo run deploy:production --filter=stonkses-frontend"
     },
     "devDependencies": {
         "@biomejs/biome": "2.3.8",

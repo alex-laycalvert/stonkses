@@ -23,9 +23,6 @@ const fastify = Fastify({
               },
 });
 
-// Export immediately for Vercel
-export default fastify;
-
 // Parse allowed origins from environment variable
 // Uses FRONTEND_URL as the primary allowed origin
 // Falls back to localhost origins for development
@@ -57,7 +54,7 @@ fastify.register(cors, {
 });
 
 // Debug endpoint to check environment configuration
-fastify.get("/api/debug/config", async (request, reply) => {
+fastify.get("/api/debug/config", async (_request, _reply) => {
     return {
         frontendUrl: process.env.FRONTEND_URL || "not set",
         backendUrl: process.env.BACKEND_URL || "not set",
@@ -234,14 +231,11 @@ fastify.get(
     },
 );
 
-// Only listen when running locally (not on Vercel)
-if (!process.env.VERCEL) {
-    fastify.listen({ port: 3000, host: "0.0.0.0" }, (err, address) => {
-        if (err) {
-            fastify.log.error(err);
-            process.exit(1);
-        }
+fastify.listen({ port: 3000 }, (err, address) => {
+    if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+    }
 
-        fastify.log.info(`Server listening at ${address}`);
-    });
-}
+    fastify.log.info(`Server listening at ${address}`);
+});

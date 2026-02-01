@@ -10,7 +10,10 @@
         "lint": "biome check --write",
         "check-types": "tsc --noEmit",
         "db:push": "drizzle-kit push",
-        "db:studio": "drizzle-kit studio"
+        "db:studio": "drizzle-kit studio",
+        "deploy": "../../scripts/deploy-backend.sh",
+        "deploy:preview": "../../scripts/deploy-backend.sh",
+        "deploy:production": "../../scripts/deploy-backend.sh --prod"
     },
     "devDependencies": {
         "@repo/biome-config": "^",
