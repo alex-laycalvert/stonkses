@@ -1,12 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { setCorsHeaders } from "../_utils.js";
-
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
-const allowedOrigins = [
-    frontendUrl,
-    ...(backendUrl !== frontendUrl ? [backendUrl] : []),
-];
+import { getAllowedOrigins, setCorsHeaders } from "../_utils.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     setCorsHeaders(req, res);
@@ -19,6 +12,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         frontendUrl: process.env.FRONTEND_URL || "not set",
         backendUrl: process.env.BACKEND_URL || "not set",
         nodeEnv: process.env.NODE_ENV || "not set",
-        allowedOrigins,
+        allowedOrigins: getAllowedOrigins(),
     });
 }

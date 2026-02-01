@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import Fastify from "fastify";
 import { auth } from "./auth.js";
+import { getAllowedOrigins } from "./config.js";
 import { db } from "./db/index.js";
 import { user as userTable } from "./db/schema.js";
 import { RobinhoodClient } from "./robinhood.js";
@@ -26,21 +27,13 @@ const fastify = Fastify({
 // Parse allowed origins from environment variable
 // Uses FRONTEND_URL as the primary allowed origin
 // Falls back to localhost origins for development
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
+const allowedOrigins = getAllowedOrigins();
 
 // Log environment variables in production for debugging
 if (process.env.NODE_ENV === "production") {
     console.log("CORS Configuration:");
-    console.log("FRONTEND_URL:", frontendUrl);
-    console.log("BACKEND_URL:", backendUrl);
-}
-
-// Support both single frontend URL and additional origins
-const allowedOrigins = [frontendUrl];
-// Allow backend URL for auth callbacks
-if (backendUrl !== frontendUrl) {
-    allowedOrigins.push(backendUrl);
+    console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+    console.log("BACKEND_URL:", process.env.BACKEND_URL);
 }
 
 console.log("Allowed CORS origins:", allowedOrigins);

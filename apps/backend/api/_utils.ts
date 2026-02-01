@@ -1,16 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { auth } from "../src/auth.js";
+import { getAllowedOrigins } from "../src/config.js";
 
-// Parse allowed origins from environment variable
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
-const allowedOrigins = [
-    frontendUrl,
-    ...(backendUrl !== frontendUrl ? [backendUrl] : []),
-];
+// Re-export for convenience
+export { getAllowedOrigins };
 
 export function setCorsHeaders(req: VercelRequest, res: VercelResponse) {
     const origin = (req.headers.origin as string) || "";
+    const allowedOrigins = getAllowedOrigins();
 
     if (allowedOrigins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
