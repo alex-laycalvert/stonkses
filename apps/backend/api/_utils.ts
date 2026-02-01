@@ -4,11 +4,10 @@ import { auth } from "../src/auth.js";
 // Parse allowed origins from environment variable
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
-
-const allowedOrigins = [frontendUrl];
-if (backendUrl !== frontendUrl) {
-    allowedOrigins.push(backendUrl);
-}
+const allowedOrigins = [
+    frontendUrl,
+    ...(backendUrl !== frontendUrl ? [backendUrl] : []),
+];
 
 export function setCorsHeaders(req: VercelRequest, res: VercelResponse) {
     const origin = (req.headers.origin as string) || "";
