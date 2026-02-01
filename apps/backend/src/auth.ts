@@ -2,30 +2,12 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { customSession } from "better-auth/plugins";
 import { db } from "./db/index.js";
+import { getAllowedOrigins } from "./config.js";
 
-// Get frontend URL for trusted origins
-// Falls back to localhost for development
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 const backendUrl = process.env.BACKEND_URL || "http://localhost:3000";
 
-// Log environment variables in production for debugging
-if (process.env.NODE_ENV === "production") {
-    console.log("Better Auth Configuration:");
-    console.log("FRONTEND_URL:", frontendUrl);
-    console.log("BACKEND_URL:", backendUrl);
-}
-
-// Trusted origins should include the frontend URL
-const trustedOrigins = [frontendUrl];
-// Also trust backend URL if different (for same-domain deployments)
-if (backendUrl !== frontendUrl) {
-    trustedOrigins.push(backendUrl);
-}
-
-console.log("Better Auth trusted origins:", trustedOrigins);
-
 export const auth = betterAuth({
-    trustedOrigins,
+    trustedOrigins: getAllowedOrigins(),
     database: drizzleAdapter(db, { provider: "sqlite" }),
     emailAndPassword: {
         enabled: true,
