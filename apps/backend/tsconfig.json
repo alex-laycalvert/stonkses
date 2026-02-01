@@ -1,6 +1,12 @@
 {
     "extends": "@repo/typescript-config/node",
     "compilerOptions": {
-        "types": ["bun"]
-    }
+        "types": ["bun"],
+        "noEmit": false,
+        "outDir": "./dist",
+        "moduleResolution": "node",
+        "allowImportingTsExtensions": false
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "dist"]
 }

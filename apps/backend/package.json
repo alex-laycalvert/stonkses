@@ -6,7 +6,7 @@
     "scripts": {
         "start": "bun run index.ts",
         "dev": "bun run --watch index.ts",
-        "build": "tsc --noEmit",
+        "build": "tsc",
         "lint": "biome check --write",
         "check-types": "tsc --noEmit",
         "db:push": "drizzle-kit push",
