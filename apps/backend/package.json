@@ -6,7 +6,7 @@
     "scripts": {
         "start": "bun run index.ts",
         "dev": "bun run --watch index.ts",
-        "build": "echo 'Backend does not require build step'",
+        "build": "tsc --noEmit",
         "lint": "biome check --write",
         "check-types": "tsc --noEmit",
         "db:push": "drizzle-kit push",

@@ -6,7 +6,7 @@
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
-            "outputs": ["dist/**", "build/**", ".react-router/**"],
+            "outputs": ["dist/**", "build/**", ".react-router/**", ".vercel/**", "!.vercel/cache/**"],
             "env": ["BETTER_AUTH_SECRET"]
         },
         "lint": {
