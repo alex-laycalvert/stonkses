@@ -53,6 +53,16 @@ fastify.register(cors, {
     maxAge: 86_400,
 });
 
+// Debug endpoint to check environment configuration
+fastify.get("/api/debug/config", async (request, reply) => {
+    return {
+        frontendUrl: process.env.FRONTEND_URL || "not set",
+        backendUrl: process.env.BACKEND_URL || "not set",
+        nodeEnv: process.env.NODE_ENV || "not set",
+        allowedOrigins,
+    };
+});
+
 // Authentication middleware
 async function requireAuth(request: FastifyRequest, reply: FastifyReply) {
     try {
