@@ -1,11 +1,11 @@
 {
     "name": "stonkses-backend",
-    "module": "index.ts",
+    "module": "src/index.ts",
     "type": "module",
     "private": true,
     "scripts": {
-        "start": "bun run index.ts",
-        "dev": "bun run --watch index.ts",
+        "start": "bun run src/index.ts",
+        "dev": "bun run --watch src/index.ts",
         "build": "echo 'Backend does not require build step'",
         "lint": "biome check --write",
         "check-types": "tsc --noEmit",
