@@ -2,7 +2,7 @@
     "extends": "@repo/typescript-config/node",
     "compilerOptions": {
         "baseUrl": ".",
-        "rootDir": "./src",
         "types": ["bun"]
-    }
+    },
+    "include": ["src/**/*", "api/**/*"]
 }
