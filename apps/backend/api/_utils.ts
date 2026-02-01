@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { auth } from "../src/auth";
 
 // Parse allowed origins from environment variable
@@ -9,65 +10,55 @@ if (backendUrl !== frontendUrl) {
     allowedOrigins.push(backendUrl);
 }
 
-export function setCorsHeaders(req: Request): Record<string, string> {
-    const origin = req.headers.get("origin") || "";
-
-    const headers: Record<string, string> = {
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers":
-            "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Max-Age": "86400",
-    };
+export function setCorsHeaders(req: VercelRequest, res: VercelResponse) {
+    const origin = (req.headers.origin as string) || "";
 
     if (allowedOrigins.includes(origin)) {
-        headers["Access-Control-Allow-Origin"] = origin;
+        res.setHeader("Access-Control-Allow-Origin", origin);
     }
 
-    return headers;
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-Requested-With",
+    );
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Max-Age", "86400");
 }
 
-export async function requireAuth(req: Request) {
+export async function requireAuth(req: VercelRequest, res: VercelResponse) {
     try {
-        const session = await auth.api.getSession({ headers: req.headers });
+        const headers = new Headers();
+        Object.entries(req.headers).forEach(([key, value]) => {
+            if (value) {
+                if (Array.isArray(value)) {
+                    value.forEach((v) => headers.append(key, v));
+                } else {
+                    headers.append(key, value);
+                }
+            }
+        });
+
+        const session = await auth.api.getSession({ headers });
 
         if (!session) {
-            return {
-                session: null,
-                response: new Response(
-                    JSON.stringify({
-                        error: "Unauthorized",
-                        code: "AUTH_REQUIRED",
-                    }),
-                    {
-                        status: 401,
-                        headers: {
-                            "Content-Type": "application/json",
-                            ...setCorsHeaders(req),
-                        },
-                    },
-                ),
-            };
+            res.status(401).json({
+                error: "Unauthorized",
+                code: "AUTH_REQUIRED",
+            });
+            return null;
         }
 
-        return { session, response: null };
+        return session;
     } catch (error) {
         console.error("Authentication Error:", error);
-        return {
-            session: null,
-            response: new Response(
-                JSON.stringify({
-                    error: "Invalid session",
-                    code: "AUTH_INVALID",
-                }),
-                {
-                    status: 401,
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...setCorsHeaders(req),
-                    },
-                },
-            ),
-        };
+        res.status(401).json({
+            error: "Invalid session",
+            code: "AUTH_INVALID",
+        });
+        return null;
     }
 }

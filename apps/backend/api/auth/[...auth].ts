@@ -1,42 +1,53 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { auth } from "../../src/auth";
 import { setCorsHeaders } from "../_utils";
 
-export default async function handler(req: Request): Promise<Response> {
-    const corsHeaders = setCorsHeaders(req);
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+    setCorsHeaders(req, res);
 
     if (req.method === "OPTIONS") {
-        return new Response(null, { status: 200, headers: corsHeaders });
+        return res.status(200).end();
     }
 
     try {
-        // Process authentication request
-        const response = await auth.handler(req);
+        // Construct request URL
+        const protocol = req.headers["x-forwarded-proto"] || "http";
+        const host = req.headers.host || "localhost:3000";
+        const url = new URL(req.url || "", `${protocol}://${host}`);
 
-        // Forward response to client with CORS headers
-        const headers = new Headers(response.headers);
-        Object.entries(corsHeaders).forEach(([key, value]) => {
-            headers.set(key, value);
+        // Convert Vercel headers to standard Headers object
+        const headers = new Headers();
+        Object.entries(req.headers).forEach(([key, value]) => {
+            if (value) {
+                if (Array.isArray(value)) {
+                    value.forEach((v) => headers.append(key, v));
+                } else {
+                    headers.append(key, value);
+                }
+            }
         });
+
+        // Create Fetch API-compatible request
+        const request = new Request(url.toString(), {
+            method: req.method || "GET",
+            headers,
+            ...(req.body ? { body: JSON.stringify(req.body) } : {}),
+        });
+
+        // Process authentication request
+        const response = await auth.handler(request);
+
+        // Forward response to client
+        res.status(response.status);
+        response.headers.forEach((value, key) => res.setHeader(key, value));
 
         const text = await response.text();
-        return new Response(text || null, {
-            status: response.status,
-            headers,
-        });
+        return res.send(text || null);
     } catch (error) {
         console.error("Authentication Error:", error);
-        return new Response(
-            JSON.stringify({
-                error: "Internal authentication error",
-                code: "AUTH_FAILURE",
-            }),
-            {
-                status: 500,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...corsHeaders,
-                },
-            },
-        );
+        return res.status(500).json({
+            error: "Internal authentication error",
+            code: "AUTH_FAILURE",
+        });
     }
 }

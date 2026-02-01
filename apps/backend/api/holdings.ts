@@ -1,38 +1,34 @@
 import type { Holding } from "@repo/robinhood";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { eq } from "drizzle-orm";
 import { db } from "../src/db";
 import { user as userTable } from "../src/db/schema";
 import { RobinhoodClient } from "../src/robinhood";
 import { requireAuth, setCorsHeaders } from "./_utils";
 
-export default async function handler(req: Request): Promise<Response> {
-    const corsHeaders = setCorsHeaders(req);
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+    setCorsHeaders(req, res);
 
     if (req.method === "OPTIONS") {
-        return new Response(null, { status: 200, headers: corsHeaders });
+        return res.status(200).end();
     }
 
     if (req.method !== "GET") {
-        return new Response(JSON.stringify({ error: "Method not allowed" }), {
-            status: 405,
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { session, response } = await requireAuth(req);
-    if (response) return response;
+    const session = await requireAuth(req, res);
+    if (!session) return; // Response already sent by requireAuth
 
     try {
         // Get user's robinhood token
         const [userData] = await db
-            .select({ robinhoodToken: userTable.robinhoodToken })
+            .select()
             .from(userTable)
-            .where(eq(userTable.id, session!.user.id));
+            .where(eq(userTable.id, session.user.id));
 
         if (!userData?.robinhoodToken) {
-            return new Response(JSON.stringify({ holdings: [] }), {
-                headers: { "Content-Type": "application/json", ...corsHeaders },
-            });
+            return res.json({ holdings: [] });
         }
 
         const rh = await RobinhoodClient.newClient(userData.robinhoodToken);
@@ -61,20 +57,12 @@ export default async function handler(req: Request): Promise<Response> {
             })),
         );
 
-        return new Response(JSON.stringify({ holdings }), {
-            headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return res.json({ holdings });
     } catch (error) {
         console.error("Error fetching holdings:", error?.toString());
-        return new Response(
-            JSON.stringify({
-                error: "Failed to fetch positions",
-                code: "FETCH_FAILED",
-            }),
-            {
-                status: 500,
-                headers: { "Content-Type": "application/json", ...corsHeaders },
-            },
-        );
+        return res.status(500).json({
+            error: "Failed to fetch positions",
+            code: "FETCH_FAILED",
+        });
     }
 }

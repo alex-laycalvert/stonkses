@@ -4,5 +4,6 @@
         "baseUrl": ".",
         "types": ["bun"]
     },
-    "include": ["src/**/*", "api/**/*"]
+    "include": ["src/**/*", "api/**/*"],
+    "exclude": ["src/index.ts"]
 }
