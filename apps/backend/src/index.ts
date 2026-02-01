@@ -3,10 +3,10 @@ import type { Holding } from "@repo/robinhood";
 import { eq } from "drizzle-orm";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import Fastify from "fastify";
-import { auth } from "./auth";
-import { db } from "./db";
-import { user as userTable } from "./db/schema";
-import { RobinhoodClient } from "./robinhood";
+import { auth } from "./auth.ts";
+import { db } from "./db/index.ts";
+import { user as userTable } from "./db/schema.ts";
+import { RobinhoodClient } from "./robinhood.ts";
 
 const fastify = Fastify({
     logger:
