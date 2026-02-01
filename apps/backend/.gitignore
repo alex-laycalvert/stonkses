@@ -38,3 +38,5 @@ sqlite.db
 
 # Drizzle
 drizzle
+.vercel
+.env*.local
