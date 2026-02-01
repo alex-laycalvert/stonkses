@@ -2,7 +2,7 @@ import { Database } from "bun:sqlite";
 import { createClient } from "@libsql/client";
 import { drizzle as drizzleBun } from "drizzle-orm/bun-sqlite";
 import { drizzle as drizzleLibsql } from "drizzle-orm/libsql";
-import * as schema from "./schema.ts";
+import * as schema from "./schema.js";
 
 // Determine environment
 const isDev = process.env.NODE_ENV !== "production";
