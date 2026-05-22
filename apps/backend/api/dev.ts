@@ -27,7 +27,6 @@ function createMockVercelRequest(req: Request): VercelRequest {
         url: url.pathname + url.search,
         headers,
         body: undefined, // Will be set async if needed
-        // biome-ignore lint: Mock VercelRequest for local dev
     } as unknown as VercelRequest;
 }
 
@@ -38,7 +37,6 @@ function createMockVercelResponse(): {
 } {
     let statusCode = 200;
     const headers: Record<string, string> = {};
-    // biome-ignore lint: Response body can be any type
     let body: unknown = null;
 
     const resolvers: Array<() => void> = [];
@@ -67,14 +65,12 @@ function createMockVercelResponse(): {
             headers[name] = value;
             return res;
         },
-        // biome-ignore lint: Response data can be any type
         json: (data: unknown) => {
             headers["Content-Type"] = "application/json";
             body = data;
             resolvers.forEach((r) => r());
             return res;
         },
-        // biome-ignore lint: Response data can be any type
         send: (data: unknown) => {
             body = data;
             resolvers.forEach((r) => r());
@@ -84,7 +80,6 @@ function createMockVercelResponse(): {
             resolvers.forEach((r) => r());
             return res;
         },
-        // biome-ignore lint: Mock VercelResponse for local dev
     } as unknown as VercelResponse;
 
     return {

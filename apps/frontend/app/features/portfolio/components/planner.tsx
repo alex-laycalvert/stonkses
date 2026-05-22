@@ -17,7 +17,6 @@ import { GripVertical, Plus, Trash } from "lucide-react";
 import { useMemo, useState } from "react";
 import { cn, formatPercentage } from "~/global/utils";
 import { usePortfolio } from "../contexts/portfolio-context";
-import { usePlannerKeyboardNav } from "../hooks/use-planner-keyboard-nav";
 import {
     loadPlannerCategories,
     savePlannerCategories,
@@ -36,16 +35,6 @@ interface SortablePlannerCategoryRowProps {
         updates: Partial<PlannerCategory>,
     ) => void;
     onRemoveCategory: (index: number) => void;
-    setRef: (
-        index: number,
-        field: "name" | "percentage" | "amount" | "deleteButton",
-        element: HTMLInputElement | HTMLButtonElement | null,
-    ) => void;
-    onNavigate: (
-        fromIndex: number,
-        fromField: "name" | "percentage" | "amount",
-        direction: "up" | "down" | "left" | "right",
-    ) => void;
 }
 
 function SortablePlannerCategoryRow({
@@ -55,8 +44,6 @@ function SortablePlannerCategoryRow({
     currentPlannerTotal,
     onUpdateCategory,
     onRemoveCategory,
-    setRef,
-    onNavigate,
 }: SortablePlannerCategoryRowProps) {
     const {
         attributes,
@@ -84,45 +71,6 @@ function SortablePlannerCategoryRow({
             : undefined;
     const amountChange = allocation?.requiredChange;
 
-    function handleKeyDown(
-        e: React.KeyboardEvent<HTMLInputElement>,
-        field: "name" | "percentage" | "amount",
-    ) {
-        if (
-            e.ctrlKey &&
-            ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
-        ) {
-            e.preventDefault();
-            if (e.key === "ArrowUp") {
-                onNavigate(index, field, "up");
-            } else if (e.key === "ArrowDown") {
-                onNavigate(index, field, "down");
-            } else if (e.key === "ArrowLeft") {
-                onNavigate(index, field, "left");
-            } else if (e.key === "ArrowRight") {
-                onNavigate(index, field, "right");
-            }
-        } else if (
-            e.key === " " &&
-            e.ctrlKey &&
-            (field === "percentage" || field === "amount")
-        ) {
-            e.preventDefault();
-            const newMode =
-                cat.inputMode === "percentage" ? "amount" : "percentage";
-            onUpdateCategory(index, {
-                inputMode: newMode,
-                // Pre-fill with current amount if switching to amount mode
-                desiredAmount:
-                    newMode === "amount" && cat.desiredAmount === undefined
-                        ? cat.currentAmount > 0
-                            ? cat.currentAmount
-                            : undefined
-                        : cat.desiredAmount,
-            });
-        }
-    }
-
     return (
         <div ref={setNodeRef} style={style} className="flex gap-2 px-2 py-1">
             {/* Name */}
@@ -137,7 +85,6 @@ function SortablePlannerCategoryRow({
                 </button>
 
                 <input
-                    ref={(el) => setRef(index, "name", el)}
                     type="text"
                     className="w-full"
                     defaultValue={cat.name}
@@ -146,8 +93,6 @@ function SortablePlannerCategoryRow({
                             onUpdateCategory(index, {
                                 name: e.currentTarget.value,
                             });
-                        } else {
-                            handleKeyDown(e, "name");
                         }
                     }}
                     onBlur={(e) => {
@@ -163,7 +108,6 @@ function SortablePlannerCategoryRow({
             <div className="flex-[1.5] space-y-1">
                 <div className="flex items-center gap-1">
                     <input
-                        ref={(el) => setRef(index, "percentage", el)}
                         key={`percentage-${cat.name}-${cat.desiredPercentage}`}
                         type="number"
                         className={cn(
@@ -192,8 +136,6 @@ function SortablePlannerCategoryRow({
                                 onUpdateCategory(index, {
                                     desiredPercentage: value,
                                 });
-                            } else {
-                                handleKeyDown(e, "percentage");
                             }
                         }}
                         onBlur={(e) => {
@@ -274,7 +216,6 @@ function SortablePlannerCategoryRow({
             <div className="flex-[1.5] space-y-1">
                 <div className="flex items-center gap-1">
                     <input
-                        ref={(el) => setRef(index, "amount", el)}
                         key={`amount-${cat.name}-${cat.desiredAmount}`}
                         type="number"
                         className={cn(
@@ -292,8 +233,6 @@ function SortablePlannerCategoryRow({
                                 onUpdateCategory(index, {
                                     desiredAmount: value,
                                 });
-                            } else {
-                                handleKeyDown(e, "amount");
                             }
                         }}
                         onBlur={(e) => {
@@ -356,7 +295,6 @@ function SortablePlannerCategoryRow({
 
             {/* Delete button */}
             <button
-                ref={(el) => setRef(index, "deleteButton", el)}
                 type="button"
                 className="w-12 h-12 flex items-center justify-center bg-errorLight text-error rounded-md"
                 onClick={() => onRemoveCategory(index)}
@@ -423,10 +361,6 @@ export function Planner() {
     const [allocations, setAllocations] = useState<AllocationResult[] | null>(
         null,
     );
-
-    // Keyboard navigation hook
-    const { setRef, addCategoryButtonRef, handleNavigate } =
-        usePlannerKeyboardNav(plannerCategories);
 
     const handleAddCategory = () => {
         const newCategories = [
@@ -709,8 +643,6 @@ export function Planner() {
                                     currentPlannerTotal={currentPlannerTotal}
                                     onUpdateCategory={handleUpdateCategory}
                                     onRemoveCategory={handleRemoveCategory}
-                                    setRef={setRef}
-                                    onNavigate={handleNavigate}
                                 />
                             );
                         })}
@@ -720,7 +652,6 @@ export function Planner() {
 
             <div className="flex gap-2">
                 <button
-                    ref={addCategoryButtonRef}
                     type="button"
                     className="bg-successLight text-success rounded-md px-4 py-2 font-medium flex items-center gap-2"
                     onClick={handleAddCategory}
