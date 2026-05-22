@@ -4,7 +4,7 @@ import { defineConfig } from "drizzle-kit";
 const isProd = process.env.NODE_ENV === "production";
 
 export default defineConfig({
-    schema: "./db/schema.ts",
+    schema: "./src/db/schema.ts",
     out: "./drizzle",
     dialect: isProd ? "turso" : "sqlite",
     dbCredentials: isProd
